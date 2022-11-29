@@ -1,23 +1,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const date = require(__dirname + "/date.js"); //so we require module which inside date.js file
+
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public")); //alows us to use static files (css javascript) inside "public" folder
 // allows us to use ejs
 app.set("view engine", "ejs");
-let items = [];
+const items = [];
 app.get("/", function (req, res) {
-  let today = new Date();
-  let options = {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  };
-  let currentDay = today.toLocaleDateString("en-US", options);
+  
+  const currentDay = date.getDate(); //now we use () because we want to start function from file date.js
+
   // engine goes to "views" folder and search for document with name "list"
   // kindOfDay is a key it must be the same name as a name of variable inside file list ejs
   // so how function render works: it tells to render file list.ejs inside folder views and find variable with name kindOfDay and give it value of variable day
-
   res.render("list", { kindOfDay: currentDay, listOfItems: items });
 });
 
@@ -30,6 +27,10 @@ app.post("/", function (req, res) {
   items.push(item);
 
   res.redirect("/");
+});
+
+app.get("/about", function(req, res){
+  res.render("about");
 });
 
 app.listen(process.env.PORT || 3000, function () {      
